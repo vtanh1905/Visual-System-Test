@@ -53,7 +53,7 @@ function ProgressArc(props) {
 }
 
 export function ProgressCircleWrapper(props) {
-    const { pct, name, used, free } = props
+    const { pct, name, used, free, cores } = props
     const svgWidth = 150;
     const arcWidth = 12;
     const progressPercentage = pct
@@ -68,14 +68,17 @@ export function ProgressCircleWrapper(props) {
                 name={name}
             />
             <Box padding="1rem" textAlign="center">
+                <p style={{ fontWeight: 'bold' }}>{name}</p>
                 {
-                    used !== undefined ? <p>USED: {used} bytes</p> : <p></p>
+                    cores !== undefined ? <p >{cores} cores</p> : <p></p>
                 }
                 {
-                    free !== undefined ? <p>FREE: {free} bytes</p> : <p></p>
+                    used !== undefined ? <p >USED: {used} bytes</p> : <p><br /></p>
+                }
+                {
+                    free !== undefined ? <p>FREE: {free} bytes</p> : <p><br /></p>
                 }
 
-                <p>{name}</p>
             </Box>
         </Box>
     );

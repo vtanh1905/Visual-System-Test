@@ -49,10 +49,10 @@ function Metric() {
 
   return (
     <div style={{ flexDirection: 'row', display: 'flex' }}>
-      {console.log(processSum)}
+      {console.log(cpu)}
       <ProgressChart
         pct={Math.floor((cpu.total === undefined ? 0 : cpu.total.pct) * 100)}
-        name={'CPU'} />
+        name={'CPU'} cores={cpu.cores}/>
 
       <ProgressChart
         pct={Math.floor((memory.used === undefined ? 0 : memory.used.pct) * 100)}
