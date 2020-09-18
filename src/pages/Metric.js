@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import ProgressChart from '../components/ProgressChart/index'
+import moment from 'moment'
+import { infoNetWorkByDay } from '../api'
 const axios = require('axios');
+
 // const { Client } = require('@elastic/elasticsearch')
 function Metric() {
   const [data, setData] = useState({})
@@ -12,47 +15,48 @@ function Metric() {
   const [processSum, setProcessSum] = useState({})
 
   useEffect(() => {
-    let dataTemp = {}
-    const getData = async () => {
-      axios.get('http://gwfpt.digihcs.com:9200/metricbeat-2020.08.29-000001/_search?pretty',
-        {
-          auth: {
-            username: 'cuong.phung',
-            password: '12345678'
-          }
-        }
-      ).then(function (response) {
-        setData(response.data.hits.hits)
-        dataTemp = response.data.hits.hits
-        Object.keys(dataTemp).map(each => {
-          (dataTemp[each]._source.event.dataset.slice(7) === "load" ?
-            setLoad(dataTemp[each]._source.system.load) :
-            dataTemp[each]._source.event.dataset.slice(7) === "cpu" ?
-              setCpu(dataTemp[each]._source.system.cpu) :
-              dataTemp[each]._source.event.dataset.slice(7) === "memory" ?
-                setMemory(dataTemp[each]._source.system.memory) :
-                dataTemp[each]._source.event.dataset.slice(7) === "network" ?
-                  setNetwork(dataTemp[each]._source.system.network) :
-                  dataTemp[each]._source.event.dataset.slice(7) === "filesystem" ?
-                    setFileSystem(dataTemp[each]._source.system.filesystem || {}) :
-                    setProcessSum(dataTemp[each]._source.system.process)
-          )
-        })
-      }).catch(function (error) {
-        console.log('Error on Authentication');
-      });
-    }
-    getData()
-
+    // let dataTemp = {}
+    // const getData = async () => {
+    //   axios.get('http://gwfpt.digihcs.com:9200/metricbeat-2020.08.29-000001/_search?pretty',
+    //     {
+    //       auth: {
+    //         username: 'cuong.phung',
+    //         password: '12345678'
+    //       }
+    //     }
+    //   ).then(function (response) {
+    //     setData(response.data.hits.hits)
+    //     dataTemp = response.data.hits.hits
+    //     Object.keys(dataTemp).map(each => {
+    //       (dataTemp[each]._source.event.dataset.slice(7) === "load" ?
+    //         setLoad(dataTemp[each]._source.system.load) :
+    //         dataTemp[each]._source.event.dataset.slice(7) === "cpu" ?
+    //           setCpu(dataTemp[each]._source.system.cpu) :
+    //           dataTemp[each]._source.event.dataset.slice(7) === "memory" ?
+    //             setMemory(dataTemp[each]._source.system.memory) :
+    //             dataTemp[each]._source.event.dataset.slice(7) === "network" ?
+    //               setNetwork(dataTemp[each]._source.system.network) :
+    //               dataTemp[each]._source.event.dataset.slice(7) === "filesystem" ?
+    //                 setFileSystem(dataTemp[each]._source.system.filesystem || {}) :
+    //                 setProcessSum(dataTemp[each]._source.system.process)
+    //       )
+    //     })
+    //   }).catch(function (error) {
+    //     console.log('Error on Authentication');
+    //   });
+    // }
+    // getData()
+    infoNetWorkByDay(moment().add('d', -10))
+      .then(res => console.log(res))
   }, [])
 
 
   return (
     <div style={{ flexDirection: 'row', display: 'flex' }}>
-      {console.log(cpu)}
+      {console.log(network)}
       <ProgressChart
         pct={Math.floor((cpu.total === undefined ? 0 : cpu.total.pct) * 100)}
-        name={'CPU'} cores={cpu.cores}/>
+        name={'CPU'} cores={cpu.cores} />
 
       <ProgressChart
         pct={Math.floor((memory.used === undefined ? 0 : memory.used.pct) * 100)}

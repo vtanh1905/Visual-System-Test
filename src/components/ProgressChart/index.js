@@ -78,7 +78,6 @@ export function ProgressCircleWrapper(props) {
                 {
                     free !== undefined ? <p>FREE: {free} bytes</p> : <p><br /></p>
                 }
-
             </Box>
         </Box>
     );
