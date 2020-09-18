@@ -39,26 +39,83 @@ export const logFileByDay = (date) => {
 
 export const logFileByWeek = (date) => {
   const startDateOfWeek = date.startOf('week');
-  return axios.all([
-    logFileByDay(startDateOfWeek),
-    logFileByDay(startDateOfWeek.clone().add('d', 1)),
-    logFileByDay(startDateOfWeek.clone().add('d', 2)),
-    logFileByDay(startDateOfWeek.clone().add('d', 3)),
-    logFileByDay(startDateOfWeek.clone().add('d', 4)),
-    logFileByDay(startDateOfWeek.clone().add('d', 5)),
-    logFileByDay(startDateOfWeek.clone().add('d', 6)),
-  ])
+  return logFileByDayV2(startDateOfWeek, startDateOfWeek.clone().add('d', 6))
 }
 
 export const logFileByMonth = (date) => {
   const startDateOfMonth = date.clone().startOf('month')
   const endDateOfMonth = date.clone().endOf('month')
-  const arrApi = []
-  const indexDate = startDateOfMonth.clone();
-  const ISOStringEndDate = endDateOfMonth.clone().add('d', 1).startOf('time').format('yyyy-MM-DD')
-  while (indexDate.format('yyyy-MM-DD') !== ISOStringEndDate) {
-    arrApi.push(logFileByDay(indexDate))
-    indexDate.add('d', 1)
-  }
-  return axios.all(arrApi)
+  return logFileByDayV2(startDateOfMonth, endDateOfMonth)
+}
+
+export const infoNetWorkByDay = (date) => {
+  return axios.post(`http://gwfpt.digihcs.com:9200/metricbeat-2020.08.29-000001/_search?pretty`,
+    {
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "exists": {
+                "field": "system.socket"
+              }
+            },
+            {
+              "range": {
+                "@timestamp": {
+                  "gte": date.toISOString(),
+                  "lt": date.clone().add('d', 1).toISOString()
+                }
+              }
+            }
+          ]
+        }
+      },
+      "size": 10000,
+      "sort": [
+        {
+          "@timestamp": {
+            "order": "asc"
+          }
+        }
+      ]
+    }
+    , {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      auth: {
+        username,
+        password
+      },
+    })
+}
+
+export const logFileByDayV2 = (startDate, endDate) => {
+  return axios.post(`http://gwfpt.digihcs.com:9200/logstash-fbjs38/_search?pretty=true&size=0`,
+    {
+      "query": {
+        "range": {
+          "@timestamp": {
+            "gte": startDate.toISOString(),
+            "lt": endDate.clone().add('d', 1).toISOString()
+          }
+        }
+      },
+      "aggs": {
+        "count": {
+          "value_count": {
+            "field": "_index"
+          }
+        }
+      }
+    }
+    , {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      auth: {
+        username,
+        password
+      },
+    })
 }
