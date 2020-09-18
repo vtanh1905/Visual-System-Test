@@ -8,7 +8,7 @@ function Home() {
       <div>
         <button onClick={() => history.push('metric')}>1.Metric</button>
         <button onClick={() => history.push('filelog')}>2.File Log</button>
-        <button>3.Visualize</button>
+        <button onClick={() => history.push('visualize')}>3.Visualize</button>
         <button onClick={() => history.push('toperror')}>4.Top Error</button>
       </div>
     </div>

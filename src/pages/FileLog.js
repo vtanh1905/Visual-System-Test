@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import moment from 'moment'
 import { DatePicker, Radio } from 'antd';
 import BarChart from '../components/BarChart'
-import { logFileByDay, logFileByWeek, logFileByMonth } from '../api'
+import { logFileByDay, logFileByWeek, logFileByMonth, logFileByDayV2 } from '../api'
 import axios from 'axios'
 
 const { RangePicker } = DatePicker;
@@ -28,7 +28,7 @@ function FileLog() {
       }
       axios.all(arrAPI)
         .then(resAll => {
-          resAll.forEach((item, index) => tempData[index].value = item.data.hits.total.value)
+          resAll.forEach((item, index) => tempData[index].value = item.data.aggregations.count.value)
           setData(tempData);
         })
     } else if (typeDate === 'week') {
@@ -45,7 +45,7 @@ function FileLog() {
       }
       axios.all(arrAPI)
         .then(resAll => {
-          resAll.forEach((item, index) => tempData[index].value = item.reduce((pre, cur) => pre + cur.data.hits.total.value, 0))
+          resAll.forEach((item, index) => tempData[index].value = item.data.aggregations.count.value)
           setData(tempData);
         })
     } else {
@@ -62,13 +62,12 @@ function FileLog() {
       }
       axios.all(arrAPI)
         .then(resAll => {
-          resAll.forEach((item, index) => tempData[index].value = item.reduce((pre, cur) => pre + cur.data.hits.total.value, 0))
+          resAll.forEach((item, index) => tempData[index].value = item.data.aggregations.count.value)
           setData(tempData);
         })
     }
   }
 
-  console.log(moment('2020-38th', "YYYY-ww").clone().day(1).toISOString());
   return (
     <div >
       <Radio.Group value={typeDate} onChange={e => setTypeDate(e.target.value)}>
