@@ -39,13 +39,13 @@ export const logFileByDay = (date) => {
 
 export const logFileByWeek = (date) => {
   const startDateOfWeek = date.startOf('week');
-  return logFileByDayV2(startDateOfWeek, startDateOfWeek.clone().add('d', 6))
+  return countLogFileByDay(startDateOfWeek, startDateOfWeek.clone().add('d', 6))
 }
 
 export const logFileByMonth = (date) => {
   const startDateOfMonth = date.clone().startOf('month')
   const endDateOfMonth = date.clone().endOf('month')
-  return logFileByDayV2(startDateOfMonth, endDateOfMonth)
+  return countLogFileByDay(startDateOfMonth, endDateOfMonth)
 }
 
 export const infoNetWorkByDay = (date) => {
@@ -90,7 +90,7 @@ export const infoNetWorkByDay = (date) => {
     })
 }
 
-export const logFileByDayV2 = (startDate, endDate) => {
+export const countLogFileByDay = (startDate, endDate) => {
   return axios.post(`http://gwfpt.digihcs.com:9200/logstash-fbjs38/_search?pretty=true&size=0`,
     {
       "query": {
