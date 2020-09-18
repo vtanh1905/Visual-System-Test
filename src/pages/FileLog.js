@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import moment from 'moment'
 import { DatePicker, Radio } from 'antd';
 import BarChart from '../components/BarChart'
-import { logFileByDay, logFileByWeek, logFileByMonth, logFileByDayV2 } from '../api'
+import { logFileByDay, logFileByWeek, logFileByMonth, countLogFileByDay } from '../api'
 import axios from 'axios'
 
 const { RangePicker } = DatePicker;
@@ -20,7 +20,7 @@ function FileLog() {
       const ISOStringEndDate = endDate.clone().add('d', 1).toISOString()
       let tempData = [];
       while (indexDate.toISOString() !== ISOStringEndDate) {
-        arrAPI.push(logFileByDay(indexDate))
+        arrAPI.push(countLogFileByDay(indexDate, indexDate.clone().add('d', 1)))
         tempData.push({
           name: indexDate.format('DD/MM/yyyy')
         })
